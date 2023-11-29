@@ -1,8 +1,8 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contacts/slice';
-import { getContacts } from 'redux/selectors';
+import { addContact } from 'redux/operations';
+import { selectContacts } from 'redux/selectors';
 import Notiflix from 'notiflix';
 import * as Yup from 'yup';
 import css from './ContactForm.module.css';
@@ -18,10 +18,10 @@ const schema = Yup.object().shape({
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const savedContacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
 
   const handleSubmit = (values, { resetForm }) => {
-    const isInContacts = savedContacts.find(
+    const isInContacts = contacts.find(
       ({ name }) => name.toLowerCase() === values.name.toLowerCase()
     );
     if (isInContacts) {
@@ -33,9 +33,10 @@ export const ContactForm = () => {
     }
     dispatch(
       addContact({
-        id: nanoid(),
+        createdAt: new Date(),
         name: values.name,
-        number: values.number,
+        phone: values.number,
+        id: nanoid(),
       })
     );
     resetForm();
